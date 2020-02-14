@@ -1,0 +1,76 @@
+version: '3.4'
+
+services:
+    nosql:
+        ports:
+            - "27017:27017"
+        volumes:
+            - nosqldata:/data/db
+ 
+    blob-storage:
+        ports:
+            - "10000:10000"
+            - "10001:10001"
+        volumes:
+            - blobdata:/data
+
+    rabbitmq:
+        ports:
+          - "15672:15672"
+          - "5672:5672"
+
+    cache:
+        ports:
+            - "6379:6379"
+        volumes:
+            - cachedata:/data
+
+    simplesearch.uploader:
+        environment:
+            - ASPNETCORE_ENVIRONMENT=Development
+            - MongoDb__ConnectionString=mongodb://nosql:27017
+            - MongoDb__Database=uploadsdb
+            - MongoDb__Collection=sessions
+            - Upload__ChunkSizeInBytes=1048576
+            - RabbitMQ__Host=rabbitmq
+            - RabbitMQ__User=guest
+            - RabbitMQ__Password=guest
+            - BlobStorage__ConnectionString=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://blob-storage:10000/devstoreaccount1;
+        ports:
+            - "5050:80"
+
+    simplesearch.analyzer.functions:
+        environment:
+            - AzureWebJobsStorage=UseDevelopmentStorage=true
+            - BlobStorage__ConnectionString=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://blob-storage:10000/devstoreaccount1;
+            - RabbitMQ__ConnectionString=amqp://guest:guest@rabbitmq:5672
+            - RabbitMQ__Host=rabbitmq
+            - RabbitMQ__User=guest
+            - RabbitMQ__Password=guest
+
+    simplesearch.indexer.functions:
+        environment:
+            - AzureWebJobsStorage=UseDevelopmentStorage=true
+            - RabbitMQ__ConnectionString=amqp://guest:guest@rabbitmq:5672
+            - MongoDb__ConnectionString=mongodb://nosql:27017
+            - MongoDb__Database=indexdb
+            - MongoDb__Collection=tokens
+
+    simplesearch.indexer:
+        environment:
+            - ASPNETCORE_ENVIRONMENT=Development
+            - MongoDb__ConnectionString=mongodb://nosql:27017
+            - MongoDb__Database=indexdb
+            - MongoDb__Collection=tokens
+            - Redis__ConnectionString=cache:6379
+            - Redis__Ttl=00:01:00
+        ports:
+            - "5051:80"
+
+volumes:
+    nosqldata:
+        external: false
+    blobdata:
+        external: false
+    cachedata:
+        external: false

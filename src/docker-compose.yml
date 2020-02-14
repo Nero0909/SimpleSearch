@@ -1,0 +1,59 @@
+version: '3.4'
+
+services:
+    nosql:
+        image: mongo
+        container_name: mongo-db
+
+    blob-storage:
+        image: mcr.microsoft.com/azure-storage/azurite:latest
+        container_name: blob-storage-emulator
+
+    rabbitmq:
+        image: rabbitmq:3-management-alpine
+        container_name: rabbit-mq
+
+    cache:
+        image: redis:alpine
+
+    simplesearch.uploader:
+        image: ${DOCKER_REGISTRY-}simplesearchuploader
+        container_name: uploader
+        build:
+            context: ./SimpleSearch.Uploader
+            dockerfile: Dockerfile
+        depends_on:
+            - nosql
+            - blob-storage
+            - rabbitmq
+
+    simplesearch.analyzer.functions:
+        image: ${DOCKER_REGISTRY-}simplesearchanalyzerfunc
+        container_name: analyzer.functions
+        build:
+            context: ./SimpleSearch.Analyzer.Functions
+            dockerfile: Dockerfile
+        depends_on:
+            - rabbitmq
+            - blob-storage
+
+    simplesearch.indexer.functions:
+        image: ${DOCKER_REGISTRY-}simplesearchindexerfunc
+        container_name: indexer.functions
+        build:
+            context: ./SimpleSearch.Indexer.Functions
+            dockerfile: Dockerfile
+        depends_on:
+            - rabbitmq
+            - nosql
+
+    simplesearch.indexer:
+        image: ${DOCKER_REGISTRY-}simplesearchindexer
+        container_name: indexer
+        build:
+            context: ./SimpleSearch.Indexer
+            dockerfile: Dockerfile
+        depends_on:
+            - nosql
+            - cache
+
