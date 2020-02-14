@@ -1,10 +1,10 @@
 ﻿using System;
 using MediatR;
-using SimpleSearch.Uploader.Application.Entities;
+using SimpleSearch.Uploader.ClientResponses;
 
 namespace SimpleSearch.Uploader.Application.Commands
 {
-    public class StartUploadSessionCommand : IRequest<UploadSession>
+    public class StartUploadSessionCommand : IRequest<StartUploadSessionResponse>
     {
         public Guid Id { get; }
 

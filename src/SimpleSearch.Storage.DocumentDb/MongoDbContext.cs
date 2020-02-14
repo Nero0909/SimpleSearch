@@ -3,7 +3,7 @@ using MongoDB.Driver;
 
 namespace SimpleSearch.Storage.DocumentDb
 {
-    public class MongoDbContext<TEntity> : IMongoDbContext<TEntity> where TEntity : DbEntity
+    public class MongoDbContext<TEntity> where TEntity : DbEntity
     {
         private readonly IMongoDatabase _database;
         private readonly string _collection;

@@ -8,25 +8,24 @@ using MongoDB.Driver;
 using SimpleSearch.Storage.Blobs;
 using SimpleSearch.Storage.DocumentDb;
 using SimpleSearch.Uploader.Application.Entities;
+using SimpleSearch.Uploader.Application.Repositories;
 
 namespace SimpleSearch.Uploader.Application.Commands
 {
     public class UploadPartCommandHandler : IRequestHandler<UploadPartCommand, bool>
     {
         private readonly IBlobStorage _blobStorage;
-        private readonly IMongoDbContext<UploadSession> _context;
+        private readonly ISessionsRepository _sessions;
 
-        public UploadPartCommandHandler(IBlobStorage blobStorage, IMongoDbContext<UploadSession> context)
+        public UploadPartCommandHandler(IBlobStorage blobStorage, ISessionsRepository sessions)
         {
             _blobStorage = blobStorage;
-            _context = context;
+            _sessions = sessions;
         }
 
         public async Task<bool> Handle(UploadPartCommand request, CancellationToken cancellationToken)
         {
-            var session = (await _context.Collection.FindAsync(
-                Builders<UploadSession>.Filter.Where(s => s.Id == request.UploadId && !s.IsCompleted),
-                cancellationToken: cancellationToken)).FirstOrDefault();
+            var session = _sessions.FindNotCompletedSessionAsync(request.UploadId, cancellationToken);
 
             if (session == null)
             {

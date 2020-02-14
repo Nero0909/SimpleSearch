@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -7,24 +8,25 @@ using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using SimpleSearch.Storage.DocumentDb;
 using SimpleSearch.Uploader.Application.Entities;
+using SimpleSearch.Uploader.Application.Repositories;
 using SimpleSearch.Uploader.Application.Settings;
+using SimpleSearch.Uploader.ClientResponses;
 using DistributionStrategy = SimpleSearch.Uploader.Application.Services.DistributionStrategy;
 
 namespace SimpleSearch.Uploader.Application.Commands
 {
-    public class StartUploadSessionCommandHandler : IRequestHandler<StartUploadSessionCommand, UploadSession>
+    public class StartUploadSessionCommandHandler : IRequestHandler<StartUploadSessionCommand, StartUploadSessionResponse>
     {
-        private readonly IMongoDbContext<UploadSession> _context;
+        private readonly ISessionsRepository _sessions;
         private readonly UploadSettings _settings;
 
-        public StartUploadSessionCommandHandler(IMongoDbContext<UploadSession> context,
-            IOptions<UploadSettings> settings)
+        public StartUploadSessionCommandHandler(IOptions<UploadSettings> settings, ISessionsRepository sessions)
         {
+            _sessions = sessions;
             _settings = settings.Value;
-            _context = context;
         }
 
-        public async Task<UploadSession> Handle(StartUploadSessionCommand request, CancellationToken cancellationToken)
+        public async Task<StartUploadSessionResponse> Handle(StartUploadSessionCommand request, CancellationToken cancellationToken)
         {
             var sessionId = MongoDB.Bson.ObjectId.GenerateNewId().ToString();
             var entity = new UploadSession
@@ -36,9 +38,13 @@ namespace SimpleSearch.Uploader.Application.Commands
                 Extension = request.Extension
             };
 
-            await _context.Collection.InsertOneAsync(entity, new InsertOneOptions(), cancellationToken);
+            await _sessions.CreateSessionAsync(entity, cancellationToken);
 
-            return entity;
+            return new StartUploadSessionResponse
+            {
+                Extension = request.Extension, Id = entity.Id, FileName = entity.FileName,
+                SizeInBytes = entity.SizeInBytes, Parts = entity.Parts.ToList()
+            };
         }
 
         private IEnumerable<UploadPart> GenerateUploadParts(long totalSizeInBytes)
