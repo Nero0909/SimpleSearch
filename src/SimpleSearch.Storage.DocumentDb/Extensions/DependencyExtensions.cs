@@ -17,7 +17,7 @@ namespace SimpleSearch.Storage.DocumentDb.Extensions
                 op.Collection = collection;
             });
 
-            services.AddSingleton<IMongoDbContext<TEntity>, MongoDbContext<TEntity>>();
+            services.AddSingleton<MongoDbContext<TEntity>>();
         }
     }
 }

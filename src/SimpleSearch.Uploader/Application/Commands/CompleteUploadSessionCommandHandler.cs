@@ -10,6 +10,7 @@ using SimpleSearch.Messages;
 using SimpleSearch.Storage.Blobs;
 using SimpleSearch.Storage.DocumentDb;
 using SimpleSearch.Uploader.Application.Entities;
+using SimpleSearch.Uploader.Application.Repositories;
 using SimpleSearch.Uploader.ClientResponses;
 
 namespace SimpleSearch.Uploader.Application.Commands
@@ -17,23 +18,20 @@ namespace SimpleSearch.Uploader.Application.Commands
     public class CompleteUploadSessionCommandHandler : IRequestHandler<CompleteUploadSessionCommand, CompleteUploadSessionResponse>
     {
         private readonly IBlobStorage _blobStorage;
-        private readonly IMongoDbContext<UploadSession> _context;
+        private readonly ISessionsRepository _sessions;
         private readonly IEventBus _eventBus;
 
-        public CompleteUploadSessionCommandHandler(IBlobStorage blobStorage, IMongoDbContext<UploadSession> context,
-            IEventBus eventBus)
+        public CompleteUploadSessionCommandHandler(IBlobStorage blobStorage,
+            IEventBus eventBus, ISessionsRepository sessions)
         {
             _blobStorage = blobStorage;
-            _context = context;
             _eventBus = eventBus;
+            _sessions = sessions;
         }
 
         public async Task<CompleteUploadSessionResponse> Handle(CompleteUploadSessionCommand request, CancellationToken cancellationToken)
         {
-            var session = (await _context.Collection.FindAsync(
-                Builders<UploadSession>.Filter.Where(s => s.Id == request.UploadId && !s.IsCompleted),
-                cancellationToken: cancellationToken)).FirstOrDefault();
-
+            var session = await _sessions.FindNotCompletedSessionAsync(request.UploadId, cancellationToken);
             if (session == null)
             {
                 return null;
@@ -66,10 +64,7 @@ namespace SimpleSearch.Uploader.Application.Commands
         {
             await Task.WhenAll(
                 _blobStorage.CommitBlockListAsync(session.Id, uploadedBlockList.Select(x => x.Id), cancellationToken),
-                _context.Collection.UpdateOneAsync(
-                    Builders<UploadSession>.Filter.Eq(s => s.Id, session.Id),
-                    Builders<UploadSession>.Update.Set(s => s.IsCompleted, true),
-                    cancellationToken: cancellationToken));
+                _sessions.CompleteSessionAsync(session.Id, cancellationToken));
         }
 
         private IList<CorruptedPart> FindCorruptedParts(UploadSession session, IEnumerable<BlockInfo> uploadedBlockList)

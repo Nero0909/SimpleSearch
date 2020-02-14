@@ -74,12 +74,12 @@ namespace SimpleSearch.Analyzer.Functions.Application.Commands
             while (!sr.EndOfStream)
             {
                 var ch = (char)sr.Read();
-                readSoFar++;
-
+                
                 if (ch.IsSeparator())
                 {
                     return offset + readSoFar;
                 }
+                readSoFar++;
             }
 
             return FailureFlag;
@@ -107,7 +107,7 @@ namespace SimpleSearch.Analyzer.Functions.Application.Commands
                     UploadId = request.UploadId,
                     FileName = request.FileName,
                     Offset = left,
-                    Length = right - left - 1
+                    Length = right - left
                 };
 
                 left = right + 1;

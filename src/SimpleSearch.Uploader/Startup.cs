@@ -11,6 +11,7 @@ using SimpleSearch.EventBus.RabbitMQ.Extensions;
 using SimpleSearch.Storage.Blobs.Extensions;
 using SimpleSearch.Storage.DocumentDb.Extensions;
 using SimpleSearch.Uploader.Application.Entities;
+using SimpleSearch.Uploader.Application.Repositories;
 using SimpleSearch.Uploader.Application.Settings;
 
 namespace SimpleSearch.Uploader
@@ -62,6 +63,7 @@ namespace SimpleSearch.Uploader
             var collection = Configuration.GetValue<string>("MongoDb:Collection");
 
             services.AddMongoDbCollection<UploadSession>(connectionString, database, collection);
+            services.AddSingleton<ISessionsRepository, MongoSessionsRepository>();
         }
 
         public void ConfigureEventBus(IServiceCollection services)
