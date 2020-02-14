@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using SimpleSearch.Indexer.Application;
 using SimpleSearch.Indexer.Application.Decorators;
 using SimpleSearch.Indexer.Application.Settings;
+using SimpleSearch.Indexer.Shared;
 using SimpleSearch.Indexer.Shared.Entities;
 using SimpleSearch.Storage.Cache.Extensions;
 using SimpleSearch.Storage.DocumentDb.Extensions;
@@ -58,6 +59,7 @@ namespace SimpleSearch.Indexer
             var collection = Configuration.GetValue<string>("MongoDb:Collection");
 
             services.AddMongoDbCollection<TokenEntity>(connectionString, database, collection);
+            services.AddSingleton<ITokensRepository, MongoTokensRepository>();
         }
 
         public void ConfigureCache(IServiceCollection services)
