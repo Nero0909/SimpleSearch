@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "SimpleSearch.Analyzer.Functions": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}
