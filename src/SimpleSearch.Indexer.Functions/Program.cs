@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using SimpleSearch.Indexer.Functions.Application.Infrastructure;
+using SimpleSearch.Indexer.Shared;
 using SimpleSearch.Indexer.Shared.Entities;
 using SimpleSearch.Storage.DocumentDb.Extensions;
 
@@ -45,6 +46,7 @@ namespace SimpleSearch.Indexer.Functions
                     var collection = context.Configuration.GetValue<string>("MongoDb:Collection");
 
                     services.AddMongoDbCollection<TokenEntity>(connectionString, database, collection);
+                    services.AddSingleton<ITokensRepository, MongoTokensRepository>();
 
                     services.AddSingleton<ITypeLocator, FunctionsTypeLocator>();
 
@@ -58,7 +60,7 @@ namespace SimpleSearch.Indexer.Functions
                 var _ = (JobHost)host.Services.GetService<IJobHost>();
 
                 // Wait for RabbitMQ
-                await Task.Delay(TimeSpan.FromSeconds(3));
+                await Task.Delay(TimeSpan.FromSeconds(5));
 
                 await host.RunAsync();
             }
