@@ -9,6 +9,7 @@ using NSubstitute;
 using SimpleSearch.Analyzer.Functions.Application.Commands;
 using SimpleSearch.Messages;
 using SimpleSearch.Storage.Blobs;
+using SimpleSearch.Tests.Shared;
 using Xunit;
 
 namespace SimpleSearch.Analyzer.Functions.Tests.Application.Commands
@@ -19,7 +20,7 @@ namespace SimpleSearch.Analyzer.Functions.Tests.Application.Commands
         public async Task ShouldTokenizeText()
         {
             // Arrange
-            var fixture = new TestFixture();
+            var fixture = new TestFixture<TokenizeTextFileFragmentCommandHandler>();
 
             var text = "112233445566778899 Saturn V rocket’s first stage carries 203,400 gallons " +
                        "(770,000 liters) " +
@@ -53,13 +54,6 @@ namespace SimpleSearch.Analyzer.Functions.Tests.Application.Commands
 
             // Assert
             result.Tokens.Select(x => x.Tag).Should().BeEquivalentTo(tokens);
-        }
-
-        private class TestFixture : Fixture
-        {
-            public TestFixture() => Customize(new AutoNSubstituteCustomization());
-
-            public TokenizeTextFileFragmentCommandHandler Sut => this.Create<TokenizeTextFileFragmentCommandHandler>();
         }
     }
 }

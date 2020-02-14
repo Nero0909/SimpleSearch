@@ -3,28 +3,24 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using MongoDB.Driver;
 using SimpleSearch.Indexer.ClientResponses;
-using SimpleSearch.Indexer.Shared.Entities;
-using SimpleSearch.Storage.DocumentDb;
+using SimpleSearch.Indexer.Shared;
 
 namespace SimpleSearch.Indexer.Application.Queries
 {
     public class SearchDocumentsByTagQueryHandler : IRequestHandler<SearchDocumentsByTagQuery, SearchResponse>
     {
-        private readonly IMongoDbContext<TokenEntity> _context;
+        private readonly ITokensRepository _tokens;
 
-        public SearchDocumentsByTagQueryHandler(IMongoDbContext<TokenEntity> context)
+        public SearchDocumentsByTagQueryHandler(ITokensRepository tokens)
         {
-            _context = context;
+            _tokens = tokens;
         }
 
         public async Task<SearchResponse> Handle(SearchDocumentsByTagQuery request, CancellationToken cancellationToken)
         {
             var normalizedTag = request.Tag.ToLowerInvariant();
-            var cursor = await _context.Collection.FindAsync<TokenEntity>(
-                Builders<TokenEntity>.Filter.Eq(x => x.Tag, normalizedTag), cancellationToken: cancellationToken);
-            var token = cursor.FirstOrDefault();
+            var token = await _tokens.FindByTagAsync(normalizedTag, cancellationToken);
 
             if (token == null)
             {

@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\SimpleSearch.Analyzer.Functions\SimpleSearch.Analyzer.Functions.csproj" />
+    <ProjectReference Include="..\SimpleSearch.Tests.Shared\SimpleSearch.Tests.Shared.csproj" />
   </ItemGroup>
 
 </Project>

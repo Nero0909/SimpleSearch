@@ -5,6 +5,7 @@ using AutoFixture.AutoNSubstitute;
 using FluentAssertions;
 using NSubstitute;
 using SimpleSearch.Storage.Blobs;
+using SimpleSearch.Tests.Shared;
 using SimpleSearch.Uploader.Application.Commands;
 using SimpleSearch.Uploader.Application.Entities;
 using SimpleSearch.Uploader.Application.Repositories;
@@ -18,7 +19,7 @@ namespace SimpleSearch.Uploader.Tests.Application.Commands
         public async Task ShouldReturnFalseIfSessionIsNotFound()
         {
             // Arrange
-            var fixture = new TestFixture();
+            var fixture = new TestFixture<UploadPartCommandHandler>();
             var command = new UploadPartCommand(new byte[0], "1", "1");
 
             // Act
@@ -32,7 +33,7 @@ namespace SimpleSearch.Uploader.Tests.Application.Commands
         public async Task ShouldReturnTrueIfSessionWasUploaded()
         {
             // Arrange
-            var fixture = new TestFixture();
+            var fixture = new TestFixture<UploadPartCommandHandler>();
             var data = new byte[0];
             var command = new UploadPartCommand(data, "1", "1");
 
@@ -46,13 +47,6 @@ namespace SimpleSearch.Uploader.Tests.Application.Commands
 
             // Assert
             result.Should().BeTrue();
-        }
-
-        private class TestFixture : Fixture
-        {
-            public TestFixture() => Customize(new AutoNSubstituteCustomization());
-
-            public UploadPartCommandHandler Sut => this.Create<UploadPartCommandHandler>();
         }
     }
 }

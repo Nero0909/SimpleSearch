@@ -11,6 +11,7 @@ using SimpleSearch.Analyzer.Functions.Application.Commands;
 using SimpleSearch.Analyzer.Functions.Application.Settings;
 using SimpleSearch.Messages;
 using SimpleSearch.Storage.Blobs;
+using SimpleSearch.Tests.Shared;
 using Xunit;
 
 namespace SimpleSearch.Analyzer.Functions.Tests.Application.Commands
@@ -21,7 +22,7 @@ namespace SimpleSearch.Analyzer.Functions.Tests.Application.Commands
         public async Task ShouldFragmentTextProperly()
         {
             // Arrange
-            var fixture = new TestFixture();
+            var fixture = new TestFixture<FragmentTextFileCommandHandler>();
 
             var input = "All work and no play makes nikita a dull boy";
 
@@ -54,13 +55,6 @@ namespace SimpleSearch.Analyzer.Functions.Tests.Application.Commands
             input[ranges[2].From..ranges[2].To].Should().Be("makes nikita");
             input[ranges[3].From..ranges[3].To].Should().Be("a dull");
             input[ranges[4].From..ranges[4].To].Should().Be("boy");
-        }
-
-        private class TestFixture : Fixture
-        {
-            public TestFixture() => Customize(new AutoNSubstituteCustomization());
-
-            public FragmentTextFileCommandHandler Sut => this.Create<FragmentTextFileCommandHandler>();
         }
     }
 }
