@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\SimpleSearch.Uploader\SimpleSearch.Uploader.csproj" />
+    <ProjectReference Include="..\..\src\SimpleSearch.Indexer.Functions\SimpleSearch.Indexer.Functions.csproj" />
     <ProjectReference Include="..\SimpleSearch.Tests.Shared\SimpleSearch.Tests.Shared.csproj" />
   </ItemGroup>
 

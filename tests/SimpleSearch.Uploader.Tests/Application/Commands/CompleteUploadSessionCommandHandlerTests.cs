@@ -5,6 +5,7 @@ using AutoFixture.AutoNSubstitute;
 using FluentAssertions;
 using NSubstitute;
 using SimpleSearch.Storage.Blobs;
+using SimpleSearch.Tests.Shared;
 using SimpleSearch.Uploader.Application.Commands;
 using SimpleSearch.Uploader.Application.Entities;
 using SimpleSearch.Uploader.Application.Repositories;
@@ -20,7 +21,7 @@ namespace SimpleSearch.Uploader.Tests.Application.Commands
         public async Task ShouldReturnNullIfSessionIsNotFound()
         {
             // Arrange
-            var fixture = new TestFixture();
+            var fixture = new TestFixture<CompleteUploadSessionCommandHandler>();
             var command = new CompleteUploadSessionCommand("123");
 
             // Act
@@ -34,7 +35,7 @@ namespace SimpleSearch.Uploader.Tests.Application.Commands
         public async Task ShouldCompleteSessionIfAllBlocksAreUploaded()
         {
             // Arrange
-            var fixture = new TestFixture();
+            var fixture = new TestFixture<CompleteUploadSessionCommandHandler>();
             var command = new CompleteUploadSessionCommand("123");
 
             var session = fixture.Build<UploadSession>()
@@ -71,7 +72,7 @@ namespace SimpleSearch.Uploader.Tests.Application.Commands
         public async Task ShouldGetCorruptedBlocksIfNoneOfThemWereNotUploaded()
         {
             // Arrange
-            var fixture = new TestFixture();
+            var fixture = new TestFixture<CompleteUploadSessionCommandHandler>();
             var command = new CompleteUploadSessionCommand("123");
 
             var session = fixture.Build<UploadSession>()
@@ -103,7 +104,7 @@ namespace SimpleSearch.Uploader.Tests.Application.Commands
         public async Task ShouldGetCorruptedBlocksIfSizeIsDifferent()
         {
             // Arrange
-            var fixture = new TestFixture();
+            var fixture = new TestFixture<CompleteUploadSessionCommandHandler>();
             var command = new CompleteUploadSessionCommand("123");
 
             var session = fixture.Build<UploadSession>()
@@ -140,13 +141,6 @@ namespace SimpleSearch.Uploader.Tests.Application.Commands
             // Assert
             result.Should().NotBeNull();
             result.CorruptedParts.Should().BeEquivalentTo(expectedPart);
-        }
-
-        private class TestFixture : Fixture
-        {
-            public TestFixture() => Customize(new AutoNSubstituteCustomization());
-
-            public CompleteUploadSessionCommandHandler Sut => this.Create<CompleteUploadSessionCommandHandler>();
         }
     }
 }

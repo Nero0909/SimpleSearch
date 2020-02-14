@@ -6,6 +6,7 @@ using AutoFixture.AutoNSubstitute;
 using FluentAssertions;
 using Microsoft.Extensions.Options;
 using NSubstitute;
+using SimpleSearch.Tests.Shared;
 using SimpleSearch.Uploader.Application.Commands;
 using SimpleSearch.Uploader.Application.Entities;
 using SimpleSearch.Uploader.Application.Settings;
@@ -20,7 +21,7 @@ namespace SimpleSearch.Uploader.Tests.Application.Commands
         public async Task ShouldGenerateSessionWith()
         {
             // Arrange
-            var fixture = new TestFixture();
+            var fixture = new TestFixture<StartUploadSessionCommandHandler>();
             var command = new StartUploadSessionCommand("file", 10, "txt");
 
             fixture.Freeze<IOptions<UploadSettings>>().Value.Returns(new UploadSettings {ChunkSizeInBytes = 3});
@@ -45,13 +46,6 @@ namespace SimpleSearch.Uploader.Tests.Application.Commands
             // Assert
             result.Should().BeEquivalentTo(expected,
                 opt => opt.Excluding(x => x.SelectedMemberPath.EndsWith("Id")));
-        }
-
-        private class TestFixture : Fixture
-        {
-            public TestFixture() => Customize(new AutoNSubstituteCustomization());
-
-            public StartUploadSessionCommandHandler Sut => this.Create<StartUploadSessionCommandHandler>();
         }
     }
 }
