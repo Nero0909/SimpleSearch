@@ -6,6 +6,10 @@ Provides API for uploading files and search which files contain the given word.
 
 ![](img/Diagram.png)
 
+## Prerequisite
+
+* Docker (Linux containers)
+
 ## How to build
 
 Probably the only way is to build the docker-compose file in Visual Studio 2019
