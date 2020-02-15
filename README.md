@@ -147,3 +147,5 @@ Body:
 * Add appropriate logging. Need some centralized log store with dashboards
 * Add health checks
 * Analyzer is very simple, probably need to filter stop words and add stamming for better search experience
+* Add infrastructure as a service (Pulumi, Terraform)
+* CI/CD
