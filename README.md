@@ -113,3 +113,25 @@ POST /api/v1/search
   ]
 }
 ```
+
+## Features
+
+* Reliable uploading 
+   * No limitation for file size (in theory)
+   * Can be done in parallel
+   * Parts can be reuploaded
+ 
+* Caching search results
+  * Search queries are cached for 1 minute (by default) in order to reduce the load on the database
+
+* Scalable architecture 
+  * Each component does not have any state and can be scaled independently
+
+## Future imporvements (aka known issues) 
+
+* Add implementation for Azure Service Bus message broker
+* Add end-to-end and integration tests
+* Add security for uploading (right now there is no checks at all, anyone can upload parts to any session, which is not good)
+* Add appropriate logging. Need some centralized log store with dashboards
+* Add health checks
+* Analyzer is very simple, probably need to filter stop words and add stamming for better search experience
