@@ -86,3 +86,30 @@ or
 }
 ```
 
+**Search for words**
+
+Only search for tags is supported for now 
+
+```
+POST /api/v1/search
+
+{
+  "query": {
+    "tag": "word"
+  }
+}
+```
+
+```
+200 OK
+
+{
+  "tag": "word",
+  "documents": [
+      {
+          "fileName": "someFile",
+          "extension": "Txt"
+      }
+  ]
+}
+```
