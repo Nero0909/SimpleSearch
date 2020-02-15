@@ -14,6 +14,12 @@ Provides API for uploading files and search which files contain the given word. 
 
 Probably the only way is to build the docker-compose file in Visual Studio 2019
 
+## Project structure
+
+Logical and physical structures are different. Below is the logical structure
+
+![](img/Structure.png)
+
 ## API
 
 **Start upload session**
