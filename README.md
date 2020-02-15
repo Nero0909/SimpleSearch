@@ -1,6 +1,6 @@
 # SimpleSearch
 
-Provides API for uploading files and search which files contain the given word.
+Provides API for uploading files and search which files contain the given word. The whole architecture is developed to be hosted in Azure Cloud.
 
 ## Architecture 
 
