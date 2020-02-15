@@ -6,8 +6,10 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
 COPY ["SimpleSearch.Indexer.Functions/SimpleSearch.Indexer.Functions.csproj", "SimpleSearch.Indexer.Functions/"]
-COPY ["SimpleSearch.Messages/SimpleSearch.Messages.csproj", "SimpleSearch.Messages/"]
+COPY ["SimpleSearch.Indexer.Shared/SimpleSearch.Indexer.Shared.csproj", "SimpleSearch.Indexer.Shared/"]
 COPY ["SimpleSearch.Storage.DocumentDb/SimpleSearch.Storage.DocumentDb.csproj", "SimpleSearch.Storage.DocumentDb/"]
+COPY ["SimpleSearch.EventBus/SimpleSearch.EventBus.csproj", "SimpleSearch.EventBus/"]
+COPY ["SimpleSearch.Messages/SimpleSearch.Messages.csproj", "SimpleSearch.Messages/"]
 RUN dotnet restore "SimpleSearch.Indexer.Functions/SimpleSearch.Indexer.Functions.csproj"
 COPY . .
 WORKDIR "/src/SimpleSearch.Indexer.Functions"

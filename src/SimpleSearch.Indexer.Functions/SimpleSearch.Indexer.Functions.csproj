@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\SimpleSearch.EventBus\SimpleSearch.EventBus.csproj" />
     <ProjectReference Include="..\SimpleSearch.Indexer.Shared\SimpleSearch.Indexer.Shared.csproj" />
     <ProjectReference Include="..\SimpleSearch.Messages\SimpleSearch.Messages.csproj" />
     <ProjectReference Include="..\SimpleSearch.Storage.DocumentDb\SimpleSearch.Storage.DocumentDb.csproj" />

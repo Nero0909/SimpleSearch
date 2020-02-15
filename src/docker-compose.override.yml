@@ -52,6 +52,9 @@ services:
         environment:
             - AzureWebJobsStorage=UseDevelopmentStorage=true
             - RabbitMQ__ConnectionString=amqp://guest:guest@rabbitmq:5672
+            - RabbitMQ__Host=rabbitmq
+            - RabbitMQ__User=guest
+            - RabbitMQ__Password=guest
             - MongoDb__ConnectionString=mongodb://nosql:27017
             - MongoDb__Database=indexdb
             - MongoDb__Collection=tokens
