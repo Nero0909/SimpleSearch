@@ -7,6 +7,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using SimpleSearch.EventBus.RabbitMQ;
+using SimpleSearch.EventBus.RabbitMQ.Extensions;
 using SimpleSearch.Indexer.Functions.Application.Infrastructure;
 using SimpleSearch.Indexer.Shared;
 using SimpleSearch.Indexer.Shared.Entities;
@@ -41,6 +43,12 @@ namespace SimpleSearch.Indexer.Functions
                 })
                 .ConfigureServices((context, services) =>
                 {
+                    var hostName = context.Configuration.GetValue<string>("RabbitMQ:Host");
+                    var userName = context.Configuration.GetValue<string>("RabbitMQ:User");
+                    var password = context.Configuration.GetValue<string>("RabbitMQ:Password");
+
+                    services.AddRabitMQConnection(hostName, userName, password);
+
                     var connectionString = context.Configuration.GetValue<string>("MongoDb:ConnectionString");
                     var database = context.Configuration.GetValue<string>("MongoDb:Database");
                     var collection = context.Configuration.GetValue<string>("MongoDb:Collection");
@@ -59,8 +67,8 @@ namespace SimpleSearch.Indexer.Functions
             {
                 var _ = (JobHost)host.Services.GetService<IJobHost>();
 
-                // Wait for RabbitMQ
-                await Task.Delay(TimeSpan.FromSeconds(5));
+                var connection = host.Services.GetService<IRabbitMQPersistentConnection>();
+                connection.TryConnect();
 
                 await host.RunAsync();
             }

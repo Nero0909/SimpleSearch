@@ -24,12 +24,13 @@ namespace SimpleSearch.Indexer.Application.Queries
 
             if (token == null)
             {
-                return new SearchResponse {Documents = Array.Empty<Document>()};
+                return new SearchResponse {Documents = Array.Empty<Document>(), Tag = normalizedTag};
             }
 
             return new SearchResponse
             {
-                Documents = token.Indexes.Select(d => new Document {Extension = d.Extension, FileName = d.Name})
+                Documents = token.Indexes.Select(d => new Document {Extension = d.Extension, FileName = d.Name}),
+                Tag = normalizedTag
             };
         }
     }
