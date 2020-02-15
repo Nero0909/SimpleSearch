@@ -23,6 +23,7 @@ This API takes the file's name, file size and extension.
 ```
 POST /api/v1/uploads
 
+Body:
 {
   "FileName": "someFile",
   "SizeInBytes": 24,
@@ -54,6 +55,8 @@ Aftert starting the session, clients can start uploading different parts of the 
 
 ```
 PUT /api/v1/uploads/:uploadid/parts/:partid
+
+Body: binary data
 ```
 
 ```
@@ -101,6 +104,7 @@ Only search for tags is supported for now
 ```
 POST /api/v1/search
 
+Body:
 {
   "query": {
     "tag": "word"
