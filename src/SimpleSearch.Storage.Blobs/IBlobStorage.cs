@@ -9,7 +9,7 @@ namespace SimpleSearch.Storage.Blobs
 {
     public interface IBlobStorage
     {
-        Task<bool> UploadBlockBlob(byte[] data, string containerName, string blockId,
+        Task<bool> UploadBlockBlob(Stream data, string containerName, string blockId,
             CancellationToken cancellationToken);
 
         Task<IEnumerable<BlockInfo>> GetBlockListAsync(string containerName, CancellationToken cancellationToken);

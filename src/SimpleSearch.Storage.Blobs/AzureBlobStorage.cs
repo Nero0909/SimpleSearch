@@ -27,13 +27,13 @@ namespace SimpleSearch.Storage.Blobs
             _cloudBlobContainer.CreateIfNotExists();
         }
 
-        public async Task<bool> UploadBlockBlob(byte[] data, string containerName, string blockId, CancellationToken cancellationToken)
+        public async Task<bool> UploadBlockBlob(Stream data, string containerName, string blockId, CancellationToken cancellationToken)
         {
             try
             {
-                var checkSum = GetMd5HashFromStream(data);
+                var checkSum = await GetMd5HashFromStreamAsync(data);
                 await _cloudBlobContainer.GetBlockBlobReference(containerName)
-                    .PutBlockAsync(blockId, new MemoryStream(data), checkSum, cancellationToken);
+                    .PutBlockAsync(blockId, data, checkSum, cancellationToken);
                 return true;
             }
             catch (StorageException e) when (e.RequestInformation.ErrorCode == BlobNotFound)
@@ -85,10 +85,24 @@ namespace SimpleSearch.Storage.Blobs
             }
         }
 
-        private string GetMd5HashFromStream(byte[] bytes)
+        private async Task<string> GetMd5HashFromStreamAsync(Stream stream)
         {
             using var md5Check = MD5.Create();
-            md5Check.TransformBlock(bytes, 0, bytes.Length, null, 0);
+
+            var buffer = new byte[1024];
+            while (true)
+            {
+                var bytesRead = await stream.ReadAsync(buffer, CancellationToken.None);
+                if (bytesRead == 0)
+                {
+                    break;
+                }
+
+                md5Check.TransformBlock(buffer, 0, buffer.Length, null, 0);
+            }
+
+            stream.Position = 0;
+
             md5Check.TransformFinalBlock(new byte[0], 0, 0);
 
             var hashBytes = md5Check.Hash;

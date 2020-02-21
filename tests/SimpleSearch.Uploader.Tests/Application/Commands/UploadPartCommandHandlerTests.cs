@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture;
 using AutoFixture.AutoNSubstitute;
@@ -20,7 +21,7 @@ namespace SimpleSearch.Uploader.Tests.Application.Commands
         {
             // Arrange
             var fixture = new TestFixture<UploadPartCommandHandler>();
-            var command = new UploadPartCommand(new byte[0], "1", "1");
+            var command = new UploadPartCommand(new MemoryStream(), "1", "1");
 
             // Act
             var result = await fixture.Sut.Handle(command, CancellationToken.None);
@@ -34,7 +35,7 @@ namespace SimpleSearch.Uploader.Tests.Application.Commands
         {
             // Arrange
             var fixture = new TestFixture<UploadPartCommandHandler>();
-            var data = new byte[0];
+            var data = new MemoryStream();
             var command = new UploadPartCommand(data, "1", "1");
 
             fixture.Freeze<ISessionsRepository>().FindNotCompletedSessionAsync(command.UploadId, CancellationToken.None)

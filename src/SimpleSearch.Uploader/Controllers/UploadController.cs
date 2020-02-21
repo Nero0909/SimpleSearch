@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SimpleSearch.Uploader.Application.Commands;
 using SimpleSearch.Uploader.ClientRequests;
@@ -34,10 +35,9 @@ namespace SimpleSearch.Uploader.Controllers
         public async Task<IActionResult> UploadPartAsync([FromRoute] string uploadId, [FromRoute] string partId,
             CancellationToken cancellationToken)
         {
-            await using var ms = new MemoryStream((int?) Request.ContentLength ?? 2048);
-            await Request.Body.CopyToAsync(ms, cancellationToken);
+            Request.EnableBuffering();
 
-            var command = new UploadPartCommand(ms.ToArray(), partId, uploadId);
+            var command = new UploadPartCommand(Request.Body, partId, uploadId);
             var success = await _mediator.Send(command, cancellationToken);
 
             if (success)
